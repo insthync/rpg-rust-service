@@ -7,6 +7,8 @@ use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use std::env;
 use dotenv::dotenv;
 use rbatis::rbatis::Rbatis;
+use rbatis::crud::CRUD;
+mod schema;
 
 #[get("/")]
 async fn index() -> impl Responder {
@@ -29,6 +31,9 @@ async fn main() -> std::io::Result<()> {
     // Connect to database  
     rb.link(&database_url).await.unwrap();
 
+    let result: Vec<schema::player::Player> = rb.fetch_list().await.unwrap();
+    println!("{:?}", result);
+    
     HttpServer::new(|| {
         App::new()
             .service(index)
